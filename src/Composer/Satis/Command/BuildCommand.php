@@ -153,14 +153,14 @@ EOT
             $config['repositories'] = array($singleRepositoryConfig);
 
             $composer = $this->getApplication()->getComposer(true, $config);
-            $packages = $this->selectPackages($composer, $output, $verbose, $requireAll, $requireDependencies);
+            $packages = $dumpPackages = $this->selectPackages($composer, $output, $verbose, $requireAll, $requireDependencies);
 
             // merge with cached data
             $packages = array_merge($otherPackages, $packages);
             ksort($packages, SORT_STRING);
         } else {
             $composer = $this->getApplication()->getComposer(true, $config);
-            $packages = $this->selectPackages($composer, $output, $verbose, $requireAll, $requireDependencies);
+            $packages = $dumpPackages = $this->selectPackages($composer, $output, $verbose, $requireAll, $requireDependencies);
         }
 
         if ($htmlView = !$input->getOption('no-html-output')) {
@@ -169,7 +169,7 @@ EOT
 
         if (isset($config['archive']['directory'])) {
             $skipErrors = (bool)$input->getOption('skip-errors');
-            $this->dumpDownloads($config, $packages, $output, $outputDir, $skipErrors);
+            $this->dumpDownloads($config, $dumpPackages, $output, $outputDir, $skipErrors);
         }
 
         file_put_contents($outputDir.'/packages.cache', serialize($packages));
